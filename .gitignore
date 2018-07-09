@@ -59,3 +59,7 @@ typings/
 
 # next.js build output
 .next
+
+#ignore the folder node_modules
+node_modules/*
+.DS_Store
