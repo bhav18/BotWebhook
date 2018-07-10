@@ -6,7 +6,10 @@ const
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()); // creates express http server
 
-// Sets server port and logs message on success
+require('dotenv').config();
+//heroku token
+app.set(process.env.VERIFICATION_TOKEN);
+// Sets server port and logs message on success 
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
