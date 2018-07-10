@@ -10,8 +10,7 @@ require('dotenv').config();
 //heroku token
 app.set(process.env.VERIFICATION_TOKEN);
 // Sets server port and logs message on success 
-console.log('webhook is listening, port ',process.env.PORT)
-//app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
+app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
  
