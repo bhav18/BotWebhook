@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
+  "engines": {
+    "node": "10.6.x",
+    "npm": "6.1.x"
   },
   "author": "",
   "license": "ISC",
