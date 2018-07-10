@@ -7,8 +7,12 @@ const
   app = express().use(bodyParser.json()); // creates express http server
 
 require('dotenv').config();
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
 //heroku token
 app.set(process.env.VERIFICATION_TOKEN);
+console.log("Heroku Verification Token:",process.env.VERIFICATION_TOKEN);
+
 // Sets server port and logs message on success 
 app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
 // Creates the endpoint for our webhook 
@@ -39,6 +43,8 @@ app.post('/webhook', (req, res) => {
   // Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
     console.log('======starting GET =====');
+    const VERIFY_TOKEN = PAGE_ACCESS_TOKEN;
+    console.log("Webhook in verify page token method", VERIFY_TOKEN);
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = "bhavtoken"
       
