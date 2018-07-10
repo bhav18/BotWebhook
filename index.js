@@ -38,7 +38,7 @@ app.post('/webhook', (req, res) => {
   });
   // Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
-
+    Console.log('======starting GET =====');
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = "bhavtoken"
       
@@ -46,10 +46,13 @@ app.get('/webhook', (req, res) => {
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
-      
+    
+    Console.log(mode);
+    Console.log(token);
+    Console.log(challenge);
     // Checks if a token and mode is in the query string of the request
     if (mode && token) {
-    
+      
       // Checks the mode and token sent is correct
       if (mode === 'subscribe' && token === VERIFY_TOKEN) {
         
@@ -61,5 +64,9 @@ app.get('/webhook', (req, res) => {
         // Responds with '403 Forbidden' if verify tokens do not match
         res.sendStatus(403);      
       }
+    }
+    else
+    {
+      res.sendStatus(500).send("NULL mode or token found");
     }
   });
