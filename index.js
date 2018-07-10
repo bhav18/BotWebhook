@@ -43,19 +43,16 @@ app.post('/webhook', (req, res) => {
   // Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
     console.log('======starting GET =====');
-    const VERIFY_TOKEN = PAGE_ACCESS_TOKEN;
-    console.log("Webhook in verify page token method", VERIFY_TOKEN);
+    
     // Your verify token. Should be a random string.
-    let VERIFY_TOKEN = "bhavtoken"
+    let VERIFY_TOKEN = PAGE_ACCESS_TOKEN
       
     // Parse the query params
     let mode = req.query['hub.mode'];
     let token = req.query['hub.verify_token'];
     let challenge = req.query['hub.challenge'];
     
-    console.log(mode);
-    console.log(token);
-    console.log(challenge);
+    console.log("Webhook in verify page token method", VERIFY_TOKEN);
     // Checks if a token and mode is in the query string of the request
     if (mode && token) {
       
