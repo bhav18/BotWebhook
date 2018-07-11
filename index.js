@@ -85,20 +85,22 @@ function callSendAPI(sender_psid, response) {
       },
       "message": response
     }
+    // Send the HTTP request to the Messenger Platform
+    request({
+      "uri": "https://floating-shore-35841.herokuapp.com/webhook",
+      "qs": { "access_token": PAGE_ACCESS_TOKEN },
+      "method": "POST",
+      "json": request_body
+    }, (err, res, body) => {
+      if (!err) {
+        console.log('message sent!')
+      } else {
+        console.error("Unable to send message:" + err);
+      }
+    }); 
 }
-  // Send the HTTP request to the Messenger Platform
-  request({
-    "uri": "https://floating-shore-35841.herokuapp.com/webhook",
-    "qs": { "access_token": PAGE_ACCESS_TOKEN },
-    "method": "POST",
-    "json": request_body
-  }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
-    } else {
-      console.error("Unable to send message:" + err);
-    }
-  }); 
+
+
   // Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
     console.log('======starting GET =====');
