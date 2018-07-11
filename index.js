@@ -8,7 +8,8 @@ const
 
 require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const request = require('http').request();
+const request = require('request');
+//const request = require('http').request();
 
 //heroku token
 app.set(process.env.VERIFICATION_TOKEN);
@@ -87,7 +88,7 @@ function callSendAPI(sender_psid, response) {
     }
     // Send the HTTP request to the Messenger Platform
     request({
-      "uri": "https://floating-shore-35841.herokuapp.com/webhook",
+      "uri": "https://graph.facebook.com/v2.6/me/messages",
       "qs": { "access_token": PAGE_ACCESS_TOKEN },
       "method": "POST",
       "json": request_body
