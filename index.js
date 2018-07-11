@@ -65,9 +65,21 @@ app.post('/webhook', (req, res) => {
       // Create the payload for a basic text message, which
       // will be added to the body of our request to the Send API
       response = {
-        "type": "web_url",
-        "url" : "https://www.authorize.net/en-anz/signupnow/",
-        "title": "SignUp"
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"button",
+            "text":"SignUp!",
+            "buttons":[
+              {
+                "type":"web_url",
+                "url":"https://www.authorize.net/en-anz/signupnow/",
+                "title":"URL Button",
+                "webview_height_ratio": "full"
+              }
+            ]
+          }
+        }
         //"text": `You sent the message: "${received_message.text}". Now send me an attachment!`
       }
     } else if (received_message.attachments) {
