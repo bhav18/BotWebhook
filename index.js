@@ -5,6 +5,7 @@ const
   express = require('express'),
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()); // creates express http server
+  request = require('request');
 
 require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
@@ -57,7 +58,6 @@ app.post('/webhook', (req, res) => {
   // Handles messages events
 function handleMessage(sender_psid, received_message) {
   let response;
-  console.log('received text inside handle message method ', received_message.text);
   // Check if the message contains text
   if (received_message.text) {    
     // Create the payload for a basic text message
@@ -85,6 +85,20 @@ function callSendAPI(sender_psid, response) {
       },
       "message": response
     }
+  
+    // Send the HTTP request to the Messenger Platform
+  request({
+    "uri": "https://floating-shore-35841.herokuapp.com/webhook",
+    "qs": { "access_token": PAGE_ACCESS_TOKEN },
+    "method": "POST",
+    "json": request_body
+  }, (err, res, body) => {
+    if (!err) {
+      console.log('message sent!')
+    } else {
+      console.error("Unable to send message:" + err);
+    }
+  }); 
   
 }
   // Adds support for GET requests to our webhook
