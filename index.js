@@ -69,12 +69,12 @@ app.post('/webhook', (req, res) => {
           "type":"template",
           "payload":{
             "template_type":"button",
-            "text":"SignUp with us!",
+            "text":"Start Accepting Payments Today!",
             "buttons":[
               {
                 "type":"web_url",
-                "url":"https://www.authorize.net/en-anz/signupnow/",
-                "title":"Authorize.NET, a Visa Solution",
+                "url":"https://www.authorize.net/sign-up/",
+                "title":"Authorize.Net, a Visa Solution",
                 "webview_height_ratio": "full"
               }
             ]
