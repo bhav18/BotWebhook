@@ -5,10 +5,10 @@ const
   express = require('express'),
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()); // creates express http server
-  request = require('http').request();
 
 require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const request = require('http').request();
 
 //heroku token
 app.set(process.env.VERIFICATION_TOKEN);
