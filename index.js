@@ -69,12 +69,12 @@ app.post('/webhook', (req, res) => {
           "type":"template",
           "payload":{
             "template_type":"button",
-            "text":"Start Accepting Payments Today!",
+            "text":"Make better fraud risk decisions using geolocation intelligence!",
             "buttons":[
               {
                 "type":"web_url",
-                "url":"https://www.authorize.net/sign-up/",
-                "title":"Authorize.Net, a Visa Solution",
+                "url":"https://developer.visa.com/capabilities/mlc/docs",
+                "title":"Mobile Location Confirmation",
                 "webview_height_ratio": "full"
               }
             ]
