@@ -56,10 +56,22 @@ app.post('/webhook', (req, res) => {
   
   });
 
+  function firstEntity(nlp, name) {
+    return nlp && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+  }  
+
   // Handles messages events
   function handleMessage(sender_psid, received_message) {
     let response;
     
+  // check greeting is here and is confident
+  const greeting = firstEntity(message.nlp, 'greetings');
+  if (greeting && greeting.confidence > 0.8) {
+    sendResponse('Hi there!');
+  } else { 
+    // default logic
+  
+
     // Checks if the message contains text
     if (received_message.text) {    
       // Create the payload for a basic text message, which
@@ -111,6 +123,7 @@ app.post('/webhook', (req, res) => {
         }
       }
     } 
+  }
     
     // Send the response message
     callSendAPI(sender_psid, response);    
