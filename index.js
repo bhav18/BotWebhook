@@ -67,7 +67,9 @@ app.post('/webhook', (req, res) => {
   // check greeting is here and is confident
   const greeting = firstEntity(received_message.nlp, 'greetings');
   if (greeting && greeting.confidence > 0.8) {
-    sendResponse('Hi there!');
+    response={
+    "text": `You sent the message: "${received_message.text}".`
+  }
   } else { 
     // default logic
   
