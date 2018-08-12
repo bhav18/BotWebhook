@@ -193,9 +193,6 @@ function verifyRequestSignature(req, res, buf) {
     }
   }
 }
-
-app.listen(PORT);
-console.log('Listening on :' + PORT + '...');
   
   //   // Checks this is an event from a page subscription
   //   if (body.object === 'page') {
