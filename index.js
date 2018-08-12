@@ -23,7 +23,7 @@ app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, po
 
 
 // Wit.ai parameters
-const WIT_TOKEN = process.env.WIT_TOKEN;
+const WIT_TOKEN = process.env.WIT_ACCESS_TOKEN;
 
 // Messenger API parameters
 const FB_PAGE_TOKEN = process.env.PAGE_ACCESS_TOKEN;
