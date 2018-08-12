@@ -4,11 +4,15 @@
 const
   express = require('express'),
   bodyParser = require('body-parser'),
-  app = express().use(bodyParser.json()); // creates express http server
+  app = express().use(bodyParser.json()), // creates express http server
+  crypto = require('crypto');
 
 require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const WIT_ACCESS_TOKEN = process.env.WIT_ACCESS_TOKEN;
 const request = require('request');
+let Wit = require('node-wit').Wit;
+let log = require('node-wit').log;
 //const request = require('http').request();
 
 //heroku token
@@ -17,44 +21,155 @@ console.log("Heroku Verification Token:",process.env.VERIFICATION_TOKEN);
 
 // Sets server port and logs message on success 
 app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
+
+
+// ----------------------------------------------------------------------------
+// Wit.ai bot specific code
+
+// This will contain all user sessions.
+// Each session has an entry:
+// sessionId -> {fbid: facebookUserId, context: sessionState}
+const sessions = {};
+
+const findOrCreateSession = (fbid) => {
+  let sessionId;
+  // Let's see if we already have a session for the user fbid
+  Object.keys(sessions).forEach(k => {
+    if (sessions[k].fbid === fbid) {
+      // Yep, got it!
+      sessionId = k;
+    }
+  });
+  if (!sessionId) {
+    // No session found for user fbid, let's create a new one
+    sessionId = new Date().toISOString();
+    sessions[sessionId] = {fbid: fbid, context: {}};
+  }
+  return sessionId;
+};
+
+// Setting up our bot
+const wit = new Wit({
+  accessToken: WIT_ACCESS_TOKEN,
+  logger: new log.Logger(log.INFO)
+});
+
+// Starting our webserver and putting it all together
+const app = express();
+app.use(({method, url}, rsp, next) => {
+  rsp.on('finish', () => {
+    console.log(`${rsp.statusCode} ${method} ${url}`);
+  });
+  next();
+});
+app.use(bodyParser.json({ verify: verifyRequestSignature }));
+
+// ----------------------------------------------------------------------------
+// Messenger API specific code
+
+// See the Send API reference
+// https://developers.facebook.com/docs/messenger-platform/send-api-reference
+
+const fbMessage = (id, text) => {
+  const body = JSON.stringify({
+    recipient: { id },
+    message: { text },
+  });
+  const qs = 'access_token=' + encodeURIComponent(PAGE_ACCESS_TOKEN);
+  return fetch('https://graph.facebook.com/me/messages?' + qs, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body,
+  })
+  .then(rsp => rsp.json())
+  .then(json => {
+    if (json.error && json.error.message) {
+      throw new Error(json.error.message);
+    }
+    return json;
+  });
+};
+
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
  
     let body = req.body;
-  
-    // Checks this is an event from a page subscription
-    if (body.object === 'page') {
-  
-      // Iterates over each entry - there may be multiple if batched
-      body.entry.forEach(function(entry) {
-  
-        // Gets the message. entry.messaging is an array, but 
-        // will only ever contain one message, so we get index 0
-        let webhook_event = entry.messaging[0];
-        console.log(webhook_event);
-        
-        // Get the sender PSID
-        let sender_psid = webhook_event.sender.id;
-        console.log('Sender PSID: ' + sender_psid);
 
-        // Check if the event is a message or postback and
-        // pass the event to the appropriate handler function
-        if (webhook_event.message) {
-          handleMessage(sender_psid, webhook_event.message);        
-        } else if (webhook_event.postback) {
-          handlePostback(sender_psid, webhook_event.postback);
-        }
-
+    if (data.object === 'page') {
+      data.entry.forEach(entry => {
+        entry.messaging.forEach(event => {
+          if (event.message && !event.message.is_echo) {
+            // Yay! We got a new message!
+            // We retrieve the Facebook user ID of the sender
+            const sender = event.sender.id;
+  
+            // We could retrieve the user's current session, or create one if it doesn't exist
+            // This is useful if we want our bot to figure out the conversation history
+            // const sessionId = findOrCreateSession(sender);
+  
+            // We retrieve the message content
+            const {text, attachments} = event.message;
+  
+            if (attachments) {
+              // We received an attachment
+              // Let's reply with an automatic message
+              fbMessage(sender, 'Sorry I can only process text messages for now.')
+              .catch(console.error);
+            } else if (text) {
+              // We received a text message
+              // Let's run /message on the text to extract some entities
+              wit.message(text).then(({entities}) => {
+                // You can customize your response to these entities
+                console.log(entities);
+                // For now, let's reply with another automatic message
+                fbMessage(sender, `We've received your message: ${text}.`);
+              })
+              .catch((err) => {
+                console.error('Oops! Got an error from Wit: ', err.stack || err);
+              })
+            }
+          } else {
+            console.log('received event', JSON.stringify(event));
+          }
+        });
       });
-  
-      // Returns a '200 OK' response to all requests
-      res.status(200).send('EVENT_RECEIVED');
-    } else {
-      // Returns a '404 Not Found' if event is not from a page subscription
-      res.sendStatus(404);
     }
-  
+    res.sendStatus(200);
   });
+  
+  //   // Checks this is an event from a page subscription
+  //   if (body.object === 'page') {
+  
+  //     // Iterates over each entry - there may be multiple if batched
+  //     body.entry.forEach(function(entry) {
+  
+  //       // Gets the message. entry.messaging is an array, but 
+  //       // will only ever contain one message, so we get index 0
+  //       let webhook_event = entry.messaging[0];
+  //       console.log(webhook_event);
+        
+  //       // Get the sender PSID
+  //       let sender_psid = webhook_event.sender.id;
+  //       console.log('Sender PSID: ' + sender_psid);
+
+  //       // Check if the event is a message or postback and
+  //       // pass the event to the appropriate handler function
+  //       if (webhook_event.message) {
+  //         handleMessage(sender_psid, webhook_event.message);        
+  //       } else if (webhook_event.postback) {
+  //         handlePostback(sender_psid, webhook_event.postback);
+  //       }
+
+  //     });
+  
+  //     // Returns a '200 OK' response to all requests
+  //     res.status(200).send('EVENT_RECEIVED');
+  //   } else {
+  //     // Returns a '404 Not Found' if event is not from a page subscription
+  //     res.sendStatus(404);
+  //   }
+  
+  // });
 
   // Handles messages events
   function handleMessage(sender_psid, received_message) {
