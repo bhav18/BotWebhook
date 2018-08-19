@@ -148,7 +148,8 @@ app.post('/webhook', (req, res) => {
               // You can customize your response to these entities
               console.log(entities);
               // For now, let's reply with another automatic message
-              fbMessage(sender, `We've received your message: ${text}.`);
+              fbMessage(sender, `We've received your message: ${text}.`).console.log(entities);
+
             })
             .catch((err) => {
               console.error('Oops! Got an error from Wit: ', err.stack || err);
