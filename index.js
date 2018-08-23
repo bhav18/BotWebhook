@@ -64,49 +64,6 @@ const fbMessage = (id, text) => {
   });
 };
 
-const fbMessageAttach = (id, attachment) => {
-  const body = JSON.stringify({
-    recipient: { id },
-    message: {     
-        "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [{
-                "title": "Is this the right picture?",
-                "subtitle": "Tap a button to answer.",
-                "buttons": [
-                  {
-                    "type": "postback",
-                    "title": "Yes!",
-                    "payload": "yes",
-                  },
-                  {
-                    "type": "postback",
-                    "title": "No!",
-                    "payload": "no",
-                  }
-                ],
-              }]
-            }
-          }
-  },
-  });
-  const qs = 'access_token=' + encodeURIComponent(FB_PAGE_TOKEN);
-  return fetch('https://graph.facebook.com/me/messages?' + qs, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body,
-  })
-  .then(rsp => rsp.json())
-  .then(json => {
-    if (json.error && json.error.message) {
-      throw new Error(json.error.message);
-    }
-    return json;
-  });
-};
-
 // ----------------------------------------------------------------------------
 // Wit.ai bot specific code
 
@@ -182,9 +139,9 @@ app.post('/webhook', (req, res) => {
           if (attachments) {
             // We received an attachment
             // Let's reply with an automatic message
-            fbMessageAttach(sender, attachments);
-            // fbMessage(sender, 'Sorry I can only process text messages for now.')
-            // .catch(console.error);
+            //fbMessageAttach(sender, attachments);
+           fbMessage(sender, 'Sorry I can only process text messages for now.')
+           .catch(console.error);
           } else if (text) {
             // We received a text message
             // Let's run /message on the text to extract some entities
@@ -197,8 +154,8 @@ app.post('/webhook', (req, res) => {
             .catch((err) => {
               console.error('Oops! Got an error from Wit: ', err.stack || err);
             })
-          }
-        } else {
+          } 
+        }  else {
           console.log('received event', JSON.stringify(event));
         }
       });
