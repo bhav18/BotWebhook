@@ -65,9 +65,7 @@ let FB_VERIFY_TOKEN = null;
     } else {
       // Returns a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
-    }
-  
-  });
+  }
 
   // Handles messages events
   function handleMessage(sender_psid, received_message) {
