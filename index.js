@@ -4,14 +4,11 @@
 const
   express = require('express'),
   bodyParser = require('body-parser'),
-  app = express().use(bodyParser.json()), // creates express http server
-  crypto = require('crypto');
+  app = express().use(bodyParser.json()); // creates express http server
 
 require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const request = require('request');
-let Wit = require('node-wit').Wit;
-let log = require('node-wit').log;
 //const request = require('http').request();
 
 //heroku token
@@ -20,42 +17,11 @@ console.log("Heroku Verification Token:",process.env.VERIFICATION_TOKEN);
 
 // Sets server port and logs message on success 
 app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
-
-
-// Wit.ai parameters
-const WIT_TOKEN = process.env.WIT_ACCESS_TOKEN;
-
-// Messenger API parameters
-const FB_PAGE_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-if (!FB_PAGE_TOKEN) { throw new Error('missing FB_PAGE_TOKEN') }
-const FB_APP_SECRET = process.env.FB_APP_SECRET;
-if (!FB_APP_SECRET) { throw new Error('missing FB_APP_SECRET') }
-
-let FB_VERIFY_TOKEN = null;
-
-  /////////////////////////////////////////////////////////////////
-
-  // Starting our webserver and putting it all together
-app.use(({method, url}, rsp, next) => {
-  rsp.on('finish', () => {
-    console.log(`${rsp.statusCode} ${method} ${url}`);
-  });
-  next();
-});
-
-// Webhook setup
-app.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === FB_VERIFY_TOKEN) {
-    res.send(req.query['hub.challenge']);
-  } else {
-    res.sendStatus(400);
-  }
-});
-
-
-// Message handler
-app.post('/webhook', (req, res) => {
+// Creates the endpoint for our webhook 
+app.post('/webhook', (req, res) => {  
+ 
+    let body = req.body;
+  
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
   
@@ -86,8 +52,9 @@ app.post('/webhook', (req, res) => {
     } else {
       // Returns a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
-  }
-});
+    }
+  
+  });
 
   // Handles messages events
   function handleMessage(sender_psid, received_message) {
@@ -144,6 +111,7 @@ app.post('/webhook', (req, res) => {
         }
       }
     } 
+    
     // Send the response message
     callSendAPI(sender_psid, response);    
   }
