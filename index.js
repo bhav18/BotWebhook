@@ -35,6 +35,27 @@ let FB_VERIFY_TOKEN = null;
 
   /////////////////////////////////////////////////////////////////
 
+  // Starting our webserver and putting it all together
+app.use(({method, url}, rsp, next) => {
+  rsp.on('finish', () => {
+    console.log(`${rsp.statusCode} ${method} ${url}`);
+  });
+  next();
+});
+app.use(bodyParser.json({ verify: verifyRequestSignature }));
+
+// Webhook setup
+app.get('/webhook', (req, res) => {
+  if (req.query['hub.mode'] === 'subscribe' &&
+    req.query['hub.verify_token'] === FB_VERIFY_TOKEN) {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+// Message handler
+app.post('/webhook', (req, res) => {
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
   
@@ -66,6 +87,7 @@ let FB_VERIFY_TOKEN = null;
       // Returns a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
   }
+});
 
   // Handles messages events
   function handleMessage(sender_psid, received_message) {
