@@ -42,7 +42,6 @@ app.use(({method, url}, rsp, next) => {
   });
   next();
 });
-app.use(bodyParser.json({ verify: verifyRequestSignature }));
 
 // Webhook setup
 app.get('/webhook', (req, res) => {
@@ -53,6 +52,7 @@ app.get('/webhook', (req, res) => {
     res.sendStatus(400);
   }
 });
+
 
 // Message handler
 app.post('/webhook', (req, res) => {
