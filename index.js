@@ -20,9 +20,11 @@ console.log("Heroku Verification Token:",process.env.VERIFICATION_TOKEN);
 app.listen(process.env.PORT || 5000, () => console.log('webhook is listening, port ',process.env.PORT));
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
+  console.log('======starting POST =====');
  
     let body = req.body;
-  
+    console.log('======starting POST =====' +body);
+
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
   
@@ -32,19 +34,20 @@ app.post('/webhook', (req, res) => {
         // Gets the message. entry.messaging is an array, but 
         // will only ever contain one message, so we get index 0
         let webhook_event = entry.messaging[0];
+
         console.log(webhook_event);
         
         // Get the sender PSID
-        let sender_psid = webhook_event.sender.id;
-        console.log('Sender PSID: ' + sender_psid);
+        // let sender_psid = webhook_event.sender.id;
+        // console.log('Sender PSID: ' + sender_psid);
 
-        // Check if the event is a message or postback and
-        // pass the event to the appropriate handler function
-        if (webhook_event.message) {
-          handleMessage(sender_psid, webhook_event.message);        
-        } else if (webhook_event.postback) {
-          handlePostback(sender_psid, webhook_event.postback);
-        }
+        // // Check if the event is a message or postback and
+        // // pass the event to the appropriate handler function
+        // if (webhook_event.message) {
+        //   handleMessage(sender_psid, webhook_event.message);        
+        // } else if (webhook_event.postback) {
+        //   handlePostback(sender_psid, webhook_event.postback);
+        // }
 
       });
   
@@ -146,7 +149,7 @@ function callSendAPI(sender_psid, response) {
     }
     // Send the HTTP request to the Messenger Platform
     request({
-      "uri": "https://graph.facebook.com/v2.6/me/messages",
+      "uri": "https://graph.facebook.com/v3.0/me/messages",
       "qs": { "access_token": PAGE_ACCESS_TOKEN },
       "method": "POST",
       "messaging_type": "ISSUE_RESOLUTION",
