@@ -144,7 +144,7 @@ app.post('/webhook', (req, res) => {
             // Let's run /message on the text to extract some entities
             wit.message(text).then(({entities}) => {
               // You can customize your response to these entities
-              console.log(entities);
+              console.log("Wit Entity:*******"+entities);
               // For now, let's reply with another automatic message
               fbMessage(sender, `We've received your message: ${text}.`);
 
