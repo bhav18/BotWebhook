@@ -146,6 +146,12 @@ app.post('/webhook', (req, res) => {
               // You can customize your response to these entities
               console.log(entities);
               console.log("*******");
+              const intent = firstEntity(entities, 'intent');
+              if(intent.value == 'Risk_Feature_MLC')
+              {
+                 text = intent.value;  
+              }
+              
               // For now, let's reply with another automatic message
               fbMessage(sender, `We've received your message: ${text}.`);
 
@@ -162,6 +168,15 @@ app.post('/webhook', (req, res) => {
   }
   res.sendStatus(200);
 });
+
+
+function firstEntity(entities, name) {
+  return entities &&
+    entities[name] &&
+    Array.isArray(entities[name]) &&
+    entities[name] &&
+    entities[name][0];
+}
 
 /*
  * Verify that the callback came from Facebook. Using the App Secret from
