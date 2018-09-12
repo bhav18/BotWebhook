@@ -150,8 +150,8 @@ app.post('/webhook', (req, res) => {
               console.log("******* stringify json data- start ********");
               console.log(entity_json_str);
               console.log("******* stringify json data- End ********");
-              console.log(entity_json_str[0].confidence);
-
+              var json_entity = JSON.parse(entity_json_str);
+              console.log(json_entity);
 
               // For now, let's reply with another automatic message
               fbMessage(sender, `We've received your message: ${text}.`);
