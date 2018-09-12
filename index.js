@@ -147,10 +147,7 @@ app.post('/webhook', (req, res) => {
               console.log(entities);
               console.log("*******");
               const intent = firstEntity(entities, 'intent');
-              if(intent.value == 'Risk_Feature_MLC')
-              {
-                 text = intent.value;  
-              }
+              console.log(intent);
               
               // For now, let's reply with another automatic message
               fbMessage(sender, `We've received your message: ${text}.`);
@@ -171,6 +168,9 @@ app.post('/webhook', (req, res) => {
 
 
 function firstEntity(entities, name) {
+
+  console.log(entities[name][0]);
+
   return entities &&
     entities[name] &&
     Array.isArray(entities[name]) &&
