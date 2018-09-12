@@ -146,9 +146,11 @@ app.post('/webhook', (req, res) => {
               // You can customize your response to these entities
               console.log(entities);
               console.log("*******");
-              var entity_str = JSON.parse(entities);
-              console.log(entity_str);
+              var entity_json_str = JSON.stringify(entities);
+              console.log(entity_json_str);
               
+              var entity_json = JSON.parse(entity_json_str);
+              console.log(entity_json);
               // For now, let's reply with another automatic message
               fbMessage(sender, `We've received your message: ${text}.`);
 
