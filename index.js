@@ -141,7 +141,7 @@ app.post('/webhook', (req, res) => {
             .catch(console.error);
           } else if (text) {
             // We received a text message
-            var text_in_reply = 'sample';
+            var text_in_reply = 'Hello, did not get what you mean. Please try mlc, biometrics, github code';
             // Let's run /message on the text to extract some entities
             wit.message(text).then(({entities}) => {
               // You can customize your response to these entities
