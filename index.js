@@ -141,23 +141,25 @@ app.post('/webhook', (req, res) => {
             .catch(console.error);
           } else if (text) {
             // We received a text message
+            var text_in_reply = 'sample';
             // Let's run /message on the text to extract some entities
             wit.message(text).then(({entities}) => {
               // You can customize your response to these entities
               console.log(entities);
               if(entities== null)
               {
-                text = 'Please send MLC or mobile location confirmation';
+                text_in_reply = 'Please send MLC or mobile location confirmation';
               } 
               else if(entities['Risk_Feature_MLC'][0]['confidence'] >0.5)
               {
-                text = entities['Risk_Feature_MLC'][0]['value'];
+                text_in_reply = entities['Risk_Feature_MLC'][0]['value'];
               }
               
               console.log(entities['Risk_Feature_MLC'][0]['confidence']);
 
               // For now, let's reply with another automatic message
-              fbMessage(sender, `We've received your message: ${text}.`);
+              //fbMessage(sender, `We've received your message: ${text}.`);
+              fbMessage(sender, `We've received your message: ${text_in_reply}.`);
 
             })
             .catch((err) => {
