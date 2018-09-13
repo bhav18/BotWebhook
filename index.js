@@ -150,15 +150,15 @@ app.post('/webhook', (req, res) => {
               {
                 text_in_reply = 'Please send MLC or mobile location confirmation';
               } 
-              else if(entities['Risk_Feature_MLC'][0]['confidence'] >0.5)
+              else if(entities['Risk_Feature_MLC'][0] != undefined && entities['Risk_Feature_MLC'][0]['confidence'] >0.5)
               {
                 text_in_reply = entities['Risk_Feature_MLC'][0]['value'];
               }
-              else if(entities['identity_fingerprint'][0]['confidence'] >0.1)
+              else if(entities['identity_fingerprint'][0] != undefined && entities['identity_fingerprint'][0]['confidence'] >0.1)
               {
                 text_in_reply = entities['identity_fingerprint'][0]['value'];
               }
-              else if(entities['visa_direct_feature'][0]['confidence'] >0.1)
+              else if(entities['visa_direct_feature'][0] != undefined && entities['visa_direct_feature'][0]['confidence'] >0.1)
               {
                 text_in_reply = entities['visa_direct_feature'][0]['value'];
               }
