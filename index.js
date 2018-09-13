@@ -154,12 +154,19 @@ app.post('/webhook', (req, res) => {
               {
                 text_in_reply = entities['Risk_Feature_MLC'][0]['value'];
               }
+              else if(entities['identity_fingerprint'][0]['confidence'] >0.1)
+              {
+                text_in_reply = entities['identity_fingerprint'][0]['value'];
+              }
+              else if(entities['visa_direct_feature'][0]['confidence'] >0.1)
+              {
+                text_in_reply = entities['visa_direct_feature'][0]['value'];
+              }
               
-              console.log(entities['Risk_Feature_MLC'][0]['confidence']);
 
               // For now, let's reply with another automatic message
               //fbMessage(sender, `We've received your message: ${text}.`);
-              fbMessage(sender, `We've received your message: ${text_in_reply}.`);
+              fbMessage(sender, `${text_in_reply}`);
 
             })
             .catch((err) => {
